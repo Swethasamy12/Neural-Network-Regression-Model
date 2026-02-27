@@ -48,39 +48,77 @@ Evaluate the model with the testing data.
 ### Register Number:212224230283
 
 ```
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+
+df1=pd.read_csv("/content/nn-dl-exp.csv")
+X = df1[['input']].values
+y = df1[['output']].values
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=33)
+
+scaler = MinMaxScaler()
+X_train = scaler.fit_transform(X_train)
+X_test =  scaler.transform(X_test)
+
+X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
+y_train_tensor = torch.tensor(y_train, dtype=torch.float32).view(-1, 1)
+X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
+y_test_tensor = torch.tensor(y_test, dtype=torch.float32).view(-1, 1)
+
 class NeuralNet(nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = nn.Linear(1, 16)
-        self.fc2 = nn.Linear(16, 8)
-        self.fc3 = nn.Linear(8, 4)
-        self.fc4 = nn.Linear(4, 1)
+        self.fc1=nn.Linear(1,10)
+        self.fc2=nn.Linear(10,18)
+        self.fc3=nn.Linear(18,1)
+        self.relu=nn.ReLU()
+        self.history={'loss':[]}
 
-    def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = torch.relu(self.fc2(x))
-        x = torch.relu(self.fc3(x))
-        x = self.fc4(x)
+    def forward(self,x):
+        x=self.relu(self.fc1(x))
+        x=self.relu(self.fc2(x))
+        x=self.fc3(x)
         return x
 
-
 # Initialize the Model, Loss Function, and Optimizer
-model = NeuralNet()
-criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+ai_brain=NeuralNet()
+criterion=nn.MSELoss()
+optimizer=optim.RMSprop(ai_brain.parameters(),lr=0.001)
 
-def train_model(nethraa_brain, X_train, y_train, criterion, optimizer, epochs=2000):
-    losses = []
 
+def train_model(ai_brain, X_train, y_train, criterion, optimizer, epochs=2000):
     for epoch in range(epochs):
-        optimizer.zero_grad()
-        output = nethraa_brain(X_train)
-        loss = criterion(output, y_train)
-        loss.backward()
-        optimizer.step()
-        losses.append(loss.item())
+    optimizer.zero_grad()
+    loss=criterion(ai_brain(X_train),y_train)
+    loss.backward()
+    optimizer.step()
 
-    return losses
+    ai_brain.history['loss'].append(loss.item())
+    if epoch%200==0:
+      print(f'Epoch [{epoch}/{epochs}], Loss:{loss.item():.6f}')
+
+with torch.no_grad():
+    test_loss = criterion(ai_brain(X_test_tensor), y_test_tensor)
+    print(f'Test Loss: {test_loss.item():.6f}')
+
+loss_df = pd.DataFrame(ai_brain.history)
+
+import matplotlib.pyplot as plt
+loss_df.plot()
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.title("Loss during Training")
+plt.show()
+
+
+X_n1_1 = torch.tensor([[3]], dtype=torch.float32)
+prediction = ai_brain(torch.tensor(scaler.transform(X_n1_1), dtype=torch.float32)).item()
+print(f'Prediction: {prediction}')
 ```
 ## Dataset Information
 <img width="196" height="351" alt="image" src="https://github.com/user-attachments/assets/c18d0d45-819b-472d-860a-f94eb0bcd284" />
