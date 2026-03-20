@@ -59,6 +59,25 @@ df1=pd.read_csv("/content/nn-dl-exp.csv")
 X = df1[['input']].values
 y = df1[['output']].values
 
+import pandas as pd
+
+# Create sample data for input and output
+sample_data = {
+    'input': [10.0, 20.0, 30.0, 40.0, 50.0],
+    'output': [20.0, 40.0, 60.0, 80.0, 100.0]
+}
+
+# Create a DataFrame
+df_sample = pd.DataFrame(sample_data)
+
+# Save the DataFrame to a CSV file in the /content/ directory
+df_sample.to_csv('/content/nn-dl-exp.csv', index=False)
+
+print("Sample 'nn-dl-exp.csv' created successfully in /content/")
+df1=pd.read_csv("/content/nn-dl-exp.csv")
+X = df1[['input']].values
+y = df1[['output']].values
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=33)
 
 scaler = MinMaxScaler()
@@ -121,14 +140,16 @@ prediction = ai_brain(torch.tensor(scaler.transform(X_n1_1), dtype=torch.float32
 print(f'Prediction: {prediction}')
 ```
 ## Dataset Information
-<img width="196" height="351" alt="image" src="https://github.com/user-attachments/assets/c18d0d45-819b-472d-860a-f94eb0bcd284" />
+<img width="133" height="716" alt="image" src="https://github.com/user-attachments/assets/4782be16-d7d4-47fe-800e-9ec597387a3c" />
+
 
 
 ## OUTPUT
 
 ### Training Loss Vs Iteration Plot
 
-<img width="686" height="555" alt="image" src="https://github.com/user-attachments/assets/723794b7-6e82-4ac1-808f-17c8e4c8fecc" />
+<img width="752" height="582" alt="image" src="https://github.com/user-attachments/assets/01973bcd-4cb0-4be2-876a-cc4a7338a344" />
+
 
 
 
@@ -136,7 +157,8 @@ print(f'Prediction: {prediction}')
 
 
 
-<img width="831" height="273" alt="image" src="https://github.com/user-attachments/assets/e10e8971-1016-4e25-aa00-c44d07b66769" />
+<img width="852" height="307" alt="image" src="https://github.com/user-attachments/assets/688388ba-42f4-4667-8464-b479df862bfd" />
+
 
 
 
